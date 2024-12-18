@@ -1,0 +1,4 @@
+logging:
+  file:
+    path: /data/log
+    name: catalina.log
