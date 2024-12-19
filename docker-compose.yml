@@ -1,0 +1,46 @@
+services:
+  loki:
+    image: grafana/loki:2.9.2
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config/config.yaml:/etc/loki/config.yaml
+      - ./data/loki:/loki  # 데이터 저장소
+
+  grafana:
+    image: grafana/grafana:8.5.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin  # Grafana 기본 사용자
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Grafana 기본 비밀번호
+    volumes:
+      - ./data/grafana:/var/lib/grafana  # Grafana 데이터 저장
+
+  app1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app1
+    volumes:
+      - ./data/app1:/data/log  # 로그 경로
+      - ./promtail-config/promtail1-config.yaml:/etc/promtail/promtail-config.yaml  # Promtail 설정 파일 마운트
+    environment:
+      - PROMTAIL_CONFIG=/etc/promtail/promtail-config.yaml  # app1의 Promtail 설정 파일 지정
+    ports:
+      - "8081:8080"
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app2
+    volumes:
+      - ./data/app2:/data/log  # 로그 경로
+      - ./promtail-config/promtail2-config.yaml:/etc/promtail/promtail-config.yaml  # Promtail 설정 파일 마운트
+    environment:
+      - PROMTAIL_CONFIG=/etc/promtail/promtail-config.yaml  # app2의 Promtail 설정 파일 지정
+    ports:
+      - "8082:8080"
