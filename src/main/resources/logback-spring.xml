@@ -1,0 +1,28 @@
+<configuration>
+
+    <!-- 콘솔 출력 설정 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} [%thread] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 파일 출력 설정 -->
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/data/log/catalina.log</file> <!-- 메인 로그 파일 경로 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/data/log/catalina-%d{yyyy-MM-dd}.log</fileNamePattern> <!-- 날짜별 롤링 파일 -->
+            <maxHistory>7</maxHistory> <!-- 7일치 로그 파일 보관 -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} [%thread] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 로그 레벨 설정 -->
+    <root level="info">
+        <appender-ref ref="CONSOLE"/> <!-- 콘솔 출력 -->
+        <appender-ref ref="ROLLING_FILE"/> <!-- 롤링 파일 출력 -->
+    </root>
+
+</configuration>
