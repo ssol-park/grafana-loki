@@ -32,7 +32,7 @@ services:
   app1:
     build:
       context: .
-      dockerfile: app/Dockerfile
+      dockerfile: promtail-config/Dockerfile
     platform: linux/arm64  # Macbook에서 실행 시
     container_name: app1
     volumes:
@@ -52,7 +52,7 @@ services:
   app2:
     build:
       context: .
-      dockerfile: app/Dockerfile
+      dockerfile: promtail-config/Dockerfile
     platform: linux/arm64  # Macbook에서 실행 시
     container_name: app2
     volumes:

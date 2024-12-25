@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # JAR 파일 복사
-COPY ../build/libs/grafana-loki-0.0.1.jar /app/grafana-loki.jar
+COPY ../build/libs/promtail-loki-0.0.1.jar /app/grafana-loki.jar
 
 # Promtail 바이너리 다운로드
 # Window
