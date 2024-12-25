@@ -1,8 +1,14 @@
 server:
   http_listen_port: 9080
+  log_level: debug
+
+positions:
+  filename: /var/lib/promtail/positions.yaml  # 위치 정보를 저장
 
 clients:
   - url: http://loki:3100/loki/api/v1/push
+    batchwait: 0.1s  # 최소 대기 시간
+    batchsize: 10000 # 작게 설정하여 실시간 처리
 
 scrape_configs:
   - job_name: "app1_logs"
@@ -12,4 +18,16 @@ scrape_configs:
         labels:
           job: "app1"
           instance: "app1"
-          __path__: /data/log/*.log
+          filename: "catalina.log"
+          __path__: /data/log/catalina.log  # 현재 파일만 수집
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) (?P<level>\S+) (?P<logger>[^\[]+)\[(?P<thread>[^\]]+)\] - (?P<message>.+)$'
+      - template:
+          source: message
+          template: 'timestamp="{{ .timestamp }}" level={{ .level }} logger="{{ .logger }}" thread="{{ .thread }}" message="{{ .message }}"'
+      - labels:
+          level: level
+          logger: logger
+          thread: thread
+
