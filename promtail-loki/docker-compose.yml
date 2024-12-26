@@ -1,34 +1,4 @@
 services:
-  loki:
-    #image: grafana/loki:2.9.2
-    build:
-      context: .
-      dockerfile: loki-config/Dockerfile
-    container_name: loki
-    ports:
-      - "3100:3100"
-    volumes:
-      - ./loki-config/config.yaml:/etc/loki/config.yaml
-      - ./data/loki:/loki  # 데이터 저장소
-    networks:
-      - loki-grafana
-
-  grafana:
-    image: grafana/grafana:8.5.0
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin  # Grafana 기본 사용자
-      - GF_SECURITY_ADMIN_PASSWORD=admin  # Grafana 기본 비밀번호
-      - TZ=${TZ}
-    volumes:
-      - ./data/grafana:/var/lib/grafana  # Grafana 데이터 저장
-    networks:
-      - loki-grafana
-    depends_on:
-      - loki
-
   app1:
     build:
       context: .
@@ -41,13 +11,11 @@ services:
       - ./data/app1/promtail:/var/lib/promtail  # 위치 파일 저장 경로
     environment:
       - PROMTAIL_CONFIG=/etc/promtail/promtail-config.yaml  # app1의 Promtail 설정 파일 지정
-      - TZ=${TZ}
+      - TZ=Asia/Seoul
     ports:
       - "8081:8080"
     networks:
-      - loki-grafana
-    depends_on:
-      - loki
+      - loki-network
 
   app2:
     build:
@@ -61,14 +29,12 @@ services:
       - ./data/app2/promtail:/var/lib/promtail  # 위치 파일 저장 경로
     environment:
       - PROMTAIL_CONFIG=/etc/promtail/promtail-config.yaml  # app2의 Promtail 설정 파일 지정
-      - TZ=${TZ}
+      - TZ=Asia/Seoul
     ports:
       - "8082:8080"
     networks:
-      - loki-grafana
-    depends_on:
-      - loki
+      - loki-network
 
 networks:
-  loki-grafana:
-    driver: bridge
+  loki-network:
+    external: true
