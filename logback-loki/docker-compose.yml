@@ -1,0 +1,38 @@
+services:
+  app3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/arm64  # Macbook에서 실행 시
+    container_name: app3
+    volumes:
+      - ./data/app3:/data/log  # 로그 경로
+    environment:
+      - TZ=Asia/Seoul
+    ports:
+      - "8083:8080"
+    networks:
+      - loki-network
+#    env_file:
+#      - ../.env
+
+  app4:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/arm64  # Macbook에서 실행 시
+    container_name: app4
+    volumes:
+      - ./data/app4:/data/log  # 로그 경로
+    environment:
+      - TZ=Asia/Seoul
+    ports:
+      - "8084:8080"
+    networks:
+      - loki-network
+#    env_file:
+#      - ../.env
+
+networks:
+  loki-network:
+    external: true
