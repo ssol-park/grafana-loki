@@ -28,8 +28,11 @@ storage_config:
     active_index_directory: /loki/index
     cache_location: /loki/cache
     shared_store: filesystem
-  filesystem:
-    directory: /loki/chunks
+
+  tsdb:
+    dir: /loki/data
+    retention_period: 7d
+
 
 limits_config:
   reject_old_samples: true
