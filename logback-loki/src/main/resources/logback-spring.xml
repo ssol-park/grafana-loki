@@ -18,6 +18,7 @@
         </encoder>
     </appender>
 
+    <!-- Loki Appender -->
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
@@ -27,11 +28,11 @@
         </http>
         <format>
             <label>
-                <pattern>app=logback,host=${HOSTNAME},level=%level,exceptionClass=%mdc{exceptionClass:-none}</pattern>
+                <pattern>app=${appname:-unknown-app},host=${container_hostname:-unknown-host},level=%level,exceptionClass=%mdc{exceptionClass:-none}</pattern>
                 <readMarkers>true</readMarkers>
             </label>
             <message>
-                <pattern>time=%d{yyyy-MM-dd HH:mm:ss},app=logback,host=${HOSTNAME},level=%level,logger=%logger{36},thread=%thread,message=%msg,exception=%ex{3}</pattern>
+                <pattern>time=%d{yyyy-MM-dd HH:mm:ss},app=${appname:-unknown-app},host=${container_hostname:-unknown-host},level=%level,logger=%logger{36},thread=%thread,message=%msg,exception=%ex{3}</pattern>
             </message>
         </format>
     </appender>
@@ -40,7 +41,7 @@
     <springProfile name="local">
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="LOKI"/> <!-- 로컬에서도 Loki 활성화 -->
+            <appender-ref ref="LOKI"/>
         </root>
     </springProfile>
 
