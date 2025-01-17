@@ -1,9 +1,9 @@
 services:
   loki:
-    #image: grafana/loki:2.9.2
-    build:
-      context: .
-      dockerfile: loki-config/Dockerfile
+    image: grafana/loki:3.3.0
+#    build:
+#      context: .
+#      dockerfile: loki-config/Dockerfile
     container_name: loki
     ports:
       - "3100:3100"

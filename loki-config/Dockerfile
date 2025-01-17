@@ -1,4 +1,4 @@
-FROM grafana/loki:2.9.2
+FROM grafana/loki:3.3.0
 
 USER root
 
