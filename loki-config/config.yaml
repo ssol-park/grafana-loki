@@ -2,44 +2,41 @@ auth_enabled: false
 
 server:
   http_listen_port: 3100
-  log_level: debug
 
-# 테스트를 위한 설정 이므로, prod 적용시 참고: https://grafana.com/blog/2021/02/16/the-essential-config-settings-you-should-use-so-you-wont-drop-logs-in-loki/?utm_source=chatgpt.com
-ingester:
-  lifecycler:
-    ring:
-      kvstore:
-        store: inmemory # Loki가 단일 인스턴스로 실행 중이며, 클러스터 모드가 아닌 단일 노드 모드로 작동 (Prod 환경에서는 클러스터링을 구성 해야함)
-      replication_factor: 1 # 로그 데이터를 여러 노드에 복제하여 가용성과 데이터 안정성을 확보 (Prod 환경에서는 2 이상으로 설정한다.)
-  chunk_idle_period: 10s # 10초간 로그가 발생하지 않으면 청크가 닫히고, 그 즉시 loki 는 스토리지에 flush 한다.
-  chunk_retain_period: 1m # 닫힌 청크가 메모리 내에 유지 되는 시간
-  chunk_target_size: 524288 # 512KB 를 초과하면 청크를 닫고 flush 실행
+common:
+#  ring: # 클러스터 구성 시 사용
+#    instance_addr: 0.0.0.0
+#    kvstore:
+#      store: inmemory
+  replication_factor: 1
+
+compactor:
+  working_directory: /loki/retention
+  compaction_interval: 10m
+  retention_enabled: true
+  retention_delete_delay: 2h
+  retention_delete_worker_count: 50
+  delete_request_store: filesystem
+
+limits_config:
+  max_query_lookback: 336h
+  retention_period: 336h
 
 schema_config:
   configs:
-    - from: 2024-12-20
-      store: tsdb # Prometheus 스타일 시계열 데이터 저장
-      object_store: filesystem # 로그 데이터를 파일 시스템(filesystem)에 저장
+    - from: "2024-12-20"
+      store: tsdb
+      object_store: filesystem
       schema: v13
       index:
         prefix: index_
-        period: 24h # index.period: 24h 설정으로 인덱스가 매일 자정(UTC 기준) 새롭게 시작
+        period: 24h
 
-storage_config:
-  boltdb_shipper:
-    active_index_directory: /loki/index
-    cache_location: /loki/cache
-    shared_store: filesystem
-
-  tsdb:
-    dir: /loki/data
-    retention_period: 7d
-
-
-limits_config:
-  reject_old_samples: true
-  reject_old_samples_max_age: 24h
-  max_look_back_period: 24h
-
-
-
+ingester:
+  wal:
+    enabled: true
+    replay_memory_ceiling: 4GB
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory

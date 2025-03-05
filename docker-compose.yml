@@ -9,7 +9,7 @@ services:
       - "3100:3100"
     volumes:
       - ./loki-config/config.yaml:/etc/loki/config.yaml
-      - ./data/loki:/loki  # 데이터 저장소
+#      - ./data/loki:/loki  # 데이터 저장소
     networks:
       - loki-network
 
